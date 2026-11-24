@@ -57,8 +57,12 @@
 
 .logo-truus {
     display: block;
-    width: 150px;
+    width: 165px;
     height: auto;
+}
+
+.logo-truus text {
+    fill: currentColor;
 }
 
 .logo-truus path,

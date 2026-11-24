@@ -27,10 +27,10 @@ export default function ServiceCards() {
 
   return (
     <>
-      {/* ─── "Call us if you need:" Heading ─── */}
+      {/* ─── "Browse creators for:" Heading ─── */}
       <div className="title-container">
         <h2 className="main-title">
-          call us if you <span className="italic-text">need:</span>
+          find creators for your <span className="italic-text">brand:</span>
         </h2>
         <svg
           xmlns="http://www.w3.org/2000/svg"

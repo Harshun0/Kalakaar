@@ -128,12 +128,12 @@ export default function MotionCards() {
             {/* ─── Part 1: Bold Heading Text with SVG Sticker Placeholders ─── */}
             <div className="motion-card__heading">
                 <h2 className="motion-card__title">
-                    an agency built
+                    a marketplace built
                     <br />
-                    for the future.
+                    for the spotlight.
                 </h2>
                 <p className="motion-card__subtitle">
-                    from TV to TikTok.
+                    from reels to YouTube.
                     {/* SVG sticker placeholder — top-right area */}
                     <span className="motion-card__sticker motion-card__sticker--top">
                         <img
@@ -232,10 +232,10 @@ export default function MotionCards() {
             {/* ─── Part 3: Bottom Paragraph Text ─── */}
             <div className="motion-card__footer-text">
                 <p className="motion-card__description">
-                    To reach the new generation you need to know where
-                    they are. We are a true 360° agency, working the
-                    whole spectrum from TikTok content to TVC and from influencer
-                    collabs to out of home spectaculars.
+                    To reach today's audience you need the right creator.
+                    Kalakaar covers the whole spectrum — from reels and
+                    YouTube to photography, podcasts and music, with
+                    transparent pricing and direct inquiries.
                 </p>
             </div>
         </section>
