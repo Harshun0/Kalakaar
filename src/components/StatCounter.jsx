@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { TextAnimate } from './TextAnimate'
 
 export function StatCounter({ stat }) {
   const [count, setCount] = useState(0)
@@ -40,7 +41,11 @@ export function StatCounter({ stat }) {
       <div className="font-display font-extrabold text-4xl md:text-6xl text-gradient mb-2">
         {stat.prefix}{count}{stat.suffix}
       </div>
-      <div className="text-muted text-sm md:text-base">{stat.label}</div>
+      <div className="text-muted text-sm md:text-base">
+        <TextAnimate animation="blurInUp" by="word" duration={0.4}>
+          {stat.label}
+        </TextAnimate>
+      </div>
     </div>
   )
 }

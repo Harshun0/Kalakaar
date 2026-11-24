@@ -1,4 +1,4 @@
-import logo from '../assets/logo.png'
+import { Logo3D } from './Logo3D'
 import { InstagramIcon, YoutubeIcon, LinkedinIcon, XIcon } from './icons'
 
 const columns = [
@@ -23,6 +23,8 @@ const socials = [
   { icon: XIcon, label: 'X' },
 ]
 
+const currentYear = new Date().getFullYear()
+
 export function Footer() {
   return (
     <footer className="relative bg-surface/30">
@@ -30,7 +32,15 @@ export function Footer() {
 
       <div className="max-w-7xl mx-auto px-5 md:px-8 py-16 grid md:grid-cols-[1.4fr_2fr] gap-12">
         <div>
-          <img src={logo} alt="Kalakaar" className="h-11 w-auto mb-4" />
+          <div className="flex items-center gap-3 mb-4">
+            <Logo3D size="md" />
+            <div className="flex flex-col">
+              <span className="font-display font-extrabold text-2xl tracking-tight text-white leading-tight">
+                Kalakaar
+              </span>
+              <span className="font-deva text-xs text-muted -mt-0.5">कलाकार मंच</span>
+            </div>
+          </div>
           <p className="text-muted text-sm max-w-xs mb-1">
             India's marketplace for brands to discover and hire content creators — direct, transparent, zero middlemen.
           </p>
@@ -69,7 +79,7 @@ export function Footer() {
 
       <div className="border-t border-white/5 py-6">
         <div className="max-w-7xl mx-auto px-5 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted">
-          <span>© {new Date().getFullYear()} Kalakaar. All rights reserved.</span>
+          <span>© {currentYear} Kalakaar. All rights reserved.</span>
           <span className="font-deva">भारत में निर्मित 🇮🇳 Made in India</span>
         </div>
       </div>

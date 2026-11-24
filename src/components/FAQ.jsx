@@ -7,7 +7,7 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState(0)
 
   return (
-    <section className="relative py-24 md:py-32">
+    <section className="relative py-10 md:py-14">
       <div className="max-w-3xl mx-auto px-5 md:px-8">
         <SectionHeading
           align="center"
