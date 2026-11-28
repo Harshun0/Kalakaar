@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 import { gsap } from 'gsap';
-import { WIGGLE_CONFIG } from '@/lib/data';
+import { WIGGLE_CONFIG, creators } from '@/lib/data';
 
-// Flat placeholder avatar (initials on a solid fill) — avoids hotlinking real creator photos.
+// Flat placeholder avatar (initials on a solid fill) — fallback helper
 function creatorAvatar(initials, bg) {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150"><rect width="150" height="150" fill="${bg}"/><text x="75" y="90" font-family="sans-serif" font-size="52" font-weight="700" fill="#FFFFFF" text-anchor="middle">${initials}</text></svg>`;
     return `data:image/svg+xml,${encodeURIComponent(svg)}`;
@@ -304,41 +304,39 @@ export default function Navbar() {
                 <div className="nav-left" style={{ cursor: "url('/assets/Cursor SVG/cursor-pointer.svg') 12 12, pointer" }}>
                     <div className="nav-hover-trigger">
                         <div className="logo-work-container">
-                            <img src="/assets/Navbar SVG/nav-work-blob.svg" width="60" height="55" className="nav-bar__work-blob-svg" alt="" aria-hidden="true" />
-                            <span className="logo-work-text">work</span>
+                            <img src="/assets/Navbar SVG/nav-work-blob.svg" width="48" height="44" className="nav-bar__work-blob-svg" alt="" aria-hidden="true" />
+                            <img
+                                src="/assets/kalakaar-logo-transparent.png"
+                                alt="Kalakaar"
+                                className="logo-kalakaar-nav"
+                            />
                         </div>
 
-                        {/* Pop-out Box for Left Side */}
+                        {/* Pop-out Box for Left Side: Curated Creators Showcase */}
                         <div className="nav-popout nav-work-box">
                             <div className="nav-popout-inner">
-                                <div className="nav-work-item">
-                                    <div className="nav-work-item__img-wrap">
-                                        <img src={creatorAvatar('AR', '#1A1A1A')} loading="eager" alt="Ananya Rao" className="nav-work-item__img" />
+                                {creators.slice(0, 3).map((c, i) => (
+                                    <div key={c.id} className="nav-work-item">
+                                        <div className="nav-work-item__img-wrap">
+                                            <img
+                                                src={c.image || creatorAvatar(c.initials, '#1A1A1A')}
+                                                loading="eager"
+                                                alt={c.name}
+                                                className="nav-work-item__img"
+                                                onError={(e) => {
+                                                    e.currentTarget.src = creatorAvatar(c.initials, '#1A1A1A');
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="nav-work-item__text">
+                                            <span className={`nav-work-badge ${i === 0 ? 'badge-maroon' : 'badge-pink'}`}>
+                                                {c.niche.split('&')[0].trim().toLowerCase()} · {c.price}
+                                            </span>
+                                            <h4 className="nav-work-title">{c.name.toLowerCase()}</h4>
+                                        </div>
                                     </div>
-                                    <div className="nav-work-item__text">
-                                        <span className="nav-work-badge badge-maroon">fashion</span>
-                                        <h4 className="nav-work-title">ananya rao</h4>
-                                    </div>
-                                </div>
-                                <div className="nav-work-item">
-                                    <div className="nav-work-item__img-wrap">
-                                        <img src={creatorAvatar('VS', '#141414')} loading="eager" alt="Vikram Sehgal" className="nav-work-item__img" />
-                                    </div>
-                                    <div className="nav-work-item__text">
-                                        <span className="nav-work-badge badge-pink">tech</span>
-                                        <h4 className="nav-work-title">vikram sehgal</h4>
-                                    </div>
-                                </div>
-                                <div className="nav-work-item">
-                                    <div className="nav-work-item__img-wrap">
-                                        <img src={creatorAvatar('PD', '#1A1A1A')} loading="eager" alt="Priya Deshmukh" className="nav-work-item__img" />
-                                    </div>
-                                    <div className="nav-work-item__text">
-                                        <span className="nav-work-badge badge-pink">food</span>
-                                        <h4 className="nav-work-title">priya deshmukh</h4>
-                                    </div>
-                                </div>
-                                <a href="#" className="nav-work-btn"><span className="nav-work-btn__text">Browse all creators</span></a>
+                                ))}
+                                <a href="#showreel-section" className="nav-work-btn"><span className="nav-work-btn__text">Browse all creators</span></a>
                             </div>
                         </div>
                     </div>
@@ -364,14 +362,14 @@ export default function Navbar() {
                             </svg>
                         </div>
 
-                        {/* Pop-out Box for Right Side */}
+                        {/* Pop-out Box for Right Side: WhatsApp Direct Connection */}
                         <div className="nav-popout nav-wa-box">
                             <div className="nav-popout-inner">
                                 <img src="/assets/wa_qr_code.png" className="nav-wa-qr" alt="WhatsApp QR Code" />
-                                <h4 className="nav-wa-title">whatsapp us</h4>
-                                <p className="nav-wa-desc">Scan the QR code to chat with us via your smartphone.</p>
-                                <a href="#" className="nav-wa-link">
-                                    <span className="nav-wa-link-text">Chat via desktop</span>
+                                <h4 className="nav-wa-title">direct whatsapp</h4>
+                                <p className="nav-wa-desc">Connect directly with creators or our talent desk with 0% platform fee.</p>
+                                <a href="https://wa.me/919876543210?text=Hi%20Kalakaar,%20I'm%20looking%20to%20hire%20creators" target="_blank" rel="noopener noreferrer" className="nav-wa-link">
+                                    <span className="nav-wa-link-text">Chat on WhatsApp</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 169 10" fill="none" className="draw-btn__svg nav-wa-link-svg">
                                         <path d="M1 6.5661C56.3941 3.06082 112.187 1.20095 168 0.999878" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25" />
                                         <path d="M32.1313 8.63371C68.2147 6.92799 104.462 6.13378 140.695 6.25107" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25" />

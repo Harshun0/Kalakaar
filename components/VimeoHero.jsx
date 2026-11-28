@@ -167,13 +167,12 @@ export default function VimeoHero() {
                 onClick={toggleMute}
             >
                 {/* 
-                  Video Placeholder: 
-                  Currently left blank to display a solid black background while you work on text, SVGs, and the navbar.
-                  Once you have your personal video file in the `public/` folder, uncomment and update the src below!
+                  Hero Video Player with fallback poster
                 */}
                 <video
                     ref={iframeRef}
-                    // src="/your-personal-video.mp4"
+                    poster="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=1920&q=80"
+                    src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
                     autoPlay
                     loop
                     muted
@@ -184,6 +183,12 @@ export default function VimeoHero() {
 
                 {/* Gradient fade */}
                 <div className="vimeo-hero__fade" />
+
+                {/* Hero value badge (bottom right) */}
+                <div className="vimeo-hero__tag" onClick={(e) => e.stopPropagation()}>
+                    <span className="vimeo-hero__tag-dot" />
+                    <span>0% commission · 25+ cities · direct inquiries</span>
+                </div>
 
                 {/* ① Headline — bottom left, word-by-word layout */}
                 <div className="home-header__title">

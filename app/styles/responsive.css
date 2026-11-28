@@ -1,27 +1,46 @@
-/* ─── Tablet (769px – 1200px) ────────────────────────────────────────────── */
-@media (min-width: 769px) and (max-width: 1348px) {
-  /* changed the max-width to a better brake point that also accommodate .card-green */
-  .cards-wrapper {
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 50px;
-    padding-bottom: 50px;
-    gap: 30px;
-    overflow: visible;
+/* ─────────────────────────────────────────────────────────────────────────────
+   responsive.css — Mobile & Tablet Optimizations for Kalakaar
+───────────────────────────────────────────────────────────────────────────── */
+
+/* ─── Global Mobile Reset & Touch Guards ─────────────────────────────────── */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  html, body {
+    max-width: 100vw;
+    overflow-x: hidden !important;
+    cursor: auto !important;
   }
 
-  .card {
-    position: relative;
-    left: auto !important;
-    top: auto !important;
-    transform: none !important;
-    width: 90%;
-    max-width: 400px;
-    height: auto;
-    min-height: 400px;
-    margin-bottom: 20px;
+  /* Disable hover cursor bubbles on touch devices */
+  .cursor-bubble,
+  .vimeo-mute-bubble {
+    display: none !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+  }
+
+  /* Reset custom image/svg cursors to system default touch cursors */
+  * {
+    cursor: auto !important;
+  }
+
+  a, button, [role="button"], input, select, textarea {
+    cursor: pointer !important;
+  }
+}
+
+/* ─── Tablet (769px – 1200px) ────────────────────────────────────────────── */
+@media (min-width: 769px) and (max-width: 1348px) {
+  .motion-card__title {
+    font-size: 5rem;
+  }
+
+  .motion-card__subtitle {
+    font-size: 5.5rem;
+  }
+
+  .motion-card__card {
+    width: 22vw;
+    height: 28vw;
   }
 }
 
@@ -29,7 +48,7 @@
 @media (max-width: 900px) {
   .footer-top {
     flex-direction: column;
-    gap: 60px;
+    gap: 40px;
   }
 
   .footer-column h3,
@@ -37,289 +56,529 @@
   .footer-email {
     font-size: 1.5rem;
   }
-
-  .footer-big-text {
-    font-size: 40vw;
-  }
 }
 
 /* ─── Mobile (≤ 768px) ───────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  /* ── Navbar ─────────────────────── */
+  /* ── Navbar ─────────────────────────────────────────────────── */
   .navbar {
-    padding: 14px 16px;
+    padding: 12px 16px;
+  }
+
+  .nav-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
   }
 
   .logo-truus {
-    width: 100px;
+    width: 95px;
   }
 
   .logo-work-container {
-    width: 48px;
-    height: 44px;
+    height: 34px;
+    width: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
   }
 
-  .logo-work-text {
-    font-size: 1.4rem;
-    margin-left: 52px;
+  .nav-bar__work-blob-svg {
+    width: 32px;
+    height: 30px;
+    flex-shrink: 0;
+  }
+
+  .logo-kalakaar-nav {
+    height: 26px;
+    max-width: 86px;
+    margin-left: -14px;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
   }
 
   .nav-bar__whatsapp-svg {
-    width: 26px;
+    width: 28px;
   }
 
-  /* ── Header Hero ────────────────── */
-  .header-content {
-    height: 100svh;
-    padding: 0 24px;
-    text-align: center;
-  }
-
-  .header-content h1 {
-    font-size: 2rem;
-  }
-
-  /* ── Content / Hero Title ───────── */
-  .content-section {
-    padding: 80px 0 0;
-    overflow: visible;
-  }
-
-  .main-title {
-    font-size: 3rem;
-    letter-spacing: -2px;
-  }
-
-  .title-underline-svg {
-    width: 100px;
-    bottom: -10px;
-  }
-
-  .title-container {
-    margin-bottom: 50px;
-  }
-
-  /* ── Cards (GSAP-controlled) ─────── */
-  .cards-wrapper {
-    position: relative !important;
-    display: block !important;
-    width: 100% !important;
-    margin: 0 auto !important;
-    overflow: visible !important;
-  }
-
-  .card {
-    width: 82vw;
+  /* Popout Drawers on Mobile */
+  .nav-left .nav-popout {
+    width: calc(100vw - 32px);
     max-width: 340px;
-    min-height: 420px;
+    left: 0;
+    top: 6px;
     height: auto;
+    max-height: 85vh;
   }
 
-  .card-sticker {
-    pointer-events: none;
+  .nav-left .nav-popout-inner {
+    padding: 70px 16px 20px 16px;
+    gap: 14px;
   }
 
-  /* ── Double Marquee ─────────────── */
-  .Double-marquee {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 60px 24px 0;
-    gap: 0;
-    min-height: unset;
+  .nav-right .nav-popout {
+    width: calc(100vw - 32px);
+    max-width: 320px;
+    right: 0;
+    top: 6px;
   }
 
-  .marquee-left {
-    max-width: 100%;
+  .nav-right .nav-popout-inner {
     width: 100%;
-    justify-content: flex-start;
-    align-items: flex-start;
-    min-height: 340px;
+    padding: 70px 16px 20px 16px;
+    gap: 14px;
   }
 
-  .marquee-text-container {
+  .nav-wa-qr {
+    width: 150px;
+  }
+
+  /* ── Vimeo Hero ─────────────────────────────────────────────── */
+  .vimeo-hero {
+    width: calc(100% - 16px);
+    height: calc(100svh - 16px);
+    margin: 8px auto;
+    border-radius: 16px;
+  }
+
+  .home-header__title {
+    bottom: 72px;
+    padding: 0 16px;
+  }
+
+  .vimeo-hero__title {
+    font-size: clamp(2rem, 8.5vw, 3.2rem);
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    gap: 0 0.12em;
+    justify-content: flex-start;
     text-align: left;
   }
 
-  .marquee-left h2 {
-    font-size: 2.6rem;
-    letter-spacing: -1.5px;
-    margin-bottom: 0;
-    margin-right: 0;
+  .home-header__smiley {
+    width: 0.85em;
+    height: 0.85em;
+    top: -0.3em;
   }
 
-  .marquee-blob-container {
-    width: 240px;
-    height: 280px;
-    top: 45%;
-    left: 20%;
+  .home-header__star {
+    width: 0.8em;
+    height: 0.8em;
+    top: -0.4em;
+    right: -0.3em;
   }
 
-  .marquee-svg-item:nth-child(1) {
-    width: 60px;
-    bottom: 10%;
-    left: 55%;
-  }
-
-  .marquee-svg-item:nth-child(2) {
-    width: 220px;
-    bottom: -5%;
-    left: 55%;
-  }
-
-  .marquee-underline {
-    top: 5rem;
-    right: auto;
-    left: 9.5rem;
-    width: 70px;
-  }
-
-  /* ── Logo columns → 2-row horizontal scroll grid ── */
-  .marquee-right {
-    display: grid;
-    grid-template-rows: 130px 130px;
-    grid-auto-flow: column;
-    grid-auto-columns: 130px;
+  .vimeo-hero__controls {
+    bottom: 20px;
+    left: 20px;
     gap: 8px;
-    width: 100%;
+  }
+
+  .vimeo-hero__btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .vimeo-hero__tag {
+    display: none;
+  }
+
+  /* ── Horizontal Words ───────────────────────────────────────── */
+  .horizontal-words-section {
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .horizontal-words__h2 {
+    font-size: clamp(2.6rem, 11vw, 4.5rem);
+    letter-spacing: -1px;
+  }
+
+  .horizontal-words__relative {
+    padding-left: 10vw;
+    padding-right: 10vw;
+  }
+
+  .horizontal-words__arrow-svg,
+  .horizontal-words__arrow-end-svg {
+    display: none;
+  }
+
+  .horizontal-words__sticker-cursor,
+  .horizontal-words__sticker-phone,
+  .horizontal-words__sticker-watch {
+    width: 3.8em;
+  }
+
+  .horizontal-words__bottom-text {
+    position: absolute;
+    left: 50%;
+    top: auto;
+    bottom: 8vh;
+    transform: translateX(-50%);
+    width: 90vw;
+    max-width: 90vw;
+    text-align: center;
+    padding: 0 10px;
+    z-index: 20;
+  }
+
+  .horizontal-words__bottom-text-l {
+    max-width: 100%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* ── Motion Cards ───────────────────────────────────────────── */
+  .motion-card-section {
+    padding: 70px 16px 50px;
+  }
+
+  .motion-card__heading {
+    margin: 0 auto 30px;
+  }
+
+  .motion-card__title {
+    font-size: clamp(2.3rem, 8.5vw, 3.8rem);
+    letter-spacing: -1.5px;
+    line-height: 0.95;
+  }
+
+  .motion-card__subtitle {
+    font-size: clamp(2.5rem, 9vw, 4rem);
+    letter-spacing: -1px;
+    top: -10px;
+  }
+
+  .motion-card__sticker--top {
+    width: 75px;
+    height: 45px;
+    right: -10px;
+    top: -10px;
+  }
+
+  .motion-card__underline-svg {
+    max-width: 85%;
+    margin: -15px auto 0;
+  }
+
+  .motion-card__cards-area {
     height: auto;
-    margin-right: 0;
-    padding: 20px 24px 32px;
+    min-height: 340px;
+    margin: 30px auto 40px;
+  }
+
+  .motion-card__blob {
+    width: 320px;
+    height: 280px;
+    transform: translate(-50%, -50%);
+    left: 50%;
+  }
+
+  .motion-card__cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .motion-card__card {
+    width: 38vw;
+    height: 48vw;
+    max-width: 160px;
+    max-height: 210px;
+    left: auto !important;
+    bottom: auto !important;
+    margin-right: -10px;
+  }
+
+  .motion-card__floating-label {
+    padding: 4px 10px;
+    font-size: 0.72rem;
+  }
+
+  .motion-card__floating-text {
+    font-size: 0.72rem;
+  }
+
+  .motion-card__floating-label--pink {
+    top: 10%;
+    left: 28%;
+  }
+
+  .motion-card__floating-label--orange {
+    top: 88%;
+    left: 50%;
+  }
+
+  .motion-card__floating-label--red {
+    top: 48%;
+    left: 78%;
+  }
+
+  .motion-card__description {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    padding: 0 10px;
+  }
+
+  /* ── Service Cards (Critical Mobile Stacking Fix) ───────────── */
+  .title-container {
+    margin-bottom: 30px;
+    padding: 0 16px;
+    text-align: center;
+  }
+
+  .main-title {
+    font-size: clamp(2.2rem, 7.5vw, 3.2rem);
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+  }
+
+  .title-underline-svg {
+    width: 120px;
+    margin: 4px auto 0;
+  }
+
+  /* ── Service Cards (Scaled fan view maintained across mobile) ── */
+  .cards-scale-container {
+    width: 100% !important;
+    overflow: visible !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+  }
+
+  /* ── Showreel (Creator Showcase) ────────────────────────────── */
+  .showreel-section {
+    padding: 60px 16px 50px;
+  }
+
+  .showreel__header {
+    margin-bottom: 36px;
+  }
+
+  .showreel__title {
+    font-size: clamp(2rem, 7vw, 3rem);
+    letter-spacing: -1px;
+  }
+
+  .showreel__subtitle {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .showreel__filters {
+    gap: 8px;
+    justify-content: flex-start;
     overflow-x: auto;
-    overflow-y: hidden;
+    padding-bottom: 8px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
 
-  .marquee-right::-webkit-scrollbar {
+  .showreel__filters::-webkit-scrollbar {
     display: none;
   }
 
-  .marquee-column {
-    display: contents;
-  }
-
-  .marquee-column::before,
-  .marquee-column::after {
-    display: none;
-  }
-
-  .marquee-column:nth-child(1) .marquee-track,
-  .marquee-column:nth-child(2) .marquee-track {
-    display: contents;
-    animation: none;
-  }
-
-  .marquee-item {
-    width: 130px;
-    height: 130px;
+  .showreel__filter-btn {
+    white-space: nowrap;
+    padding: 8px 16px;
+    font-size: 0.82rem;
     flex-shrink: 0;
   }
 
-  /* ── Footer ─────────────────────── */
+  .showreel__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .creator-card {
+    aspect-ratio: 9 / 12.5;
+    border-radius: 18px;
+  }
+
+  .creator-card__name {
+    font-size: 1.35rem;
+  }
+
+  .creator-card__tagline {
+    font-size: 0.82rem;
+  }
+
+  .creator-card__bottom-bar {
+    padding: 20px 16px;
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .showreel__join-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* ── Double Marquee (Scaled to match desktop screenshot 1) ──── */
+  .Double-marquee {
+    padding: 10px 0 !important;
+    min-height: unset !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    overflow: visible !important;
+    background-color: var(--bg-color);
+  }
+
+  .marquee-scale-container {
+    width: 100% !important;
+    overflow: visible !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  /* ── Footer ─────────────────────────────────────────────────── */
   .main-footer {
-    padding: 6px;
+    padding: 8px;
   }
 
   .footer-inner {
-    padding: 50px 20px 30px;
-    border-radius: 14px;
-    min-height: 100svh;
+    padding: 44px 18px 24px;
+    border-radius: 16px;
+    min-height: 90svh;
   }
 
   .footer-top {
     flex-direction: column;
-    gap: 36px;
+    gap: 32px;
   }
 
   .footer-column h3 {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     letter-spacing: -0.5px;
   }
 
   .footer-column address {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
 
   .footer-email {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
+    word-break: break-all;
   }
 
   .footer-whatsapp {
     font-size: 1.1rem;
-    margin-top: -6px;
+    margin-top: -4px;
   }
 
-  .footer-map-link {
-    font-size: 0.95rem;
+  .footer-note {
+    font-size: 0.88rem;
   }
 
-  /* ── Footer Stickers (mobile) ──── */
-  .sticker-boom {
-    left: 2%;
-    bottom: 10%;
-    width: 90px;
+  .footer-socials {
+    gap: 16px;
   }
 
-  .sticker-smiley {
-    left: 30%;
-    bottom: 5%;
-    width: 90px;
+  .footer-socials a {
+    width: 42px;
+    height: 42px;
   }
 
-  .sticker-heart {
-    left: 50%;
-    bottom: 18%;
-    width: 85px;
-  }
-
-  .footer-sticker.sticker-hands {
-    left: 60%;
-    bottom: 2%;
-    width: 90px;
-  }
-
-  .footer-sticker.sticker-100 {
-    left: 72%;
-    bottom: 20%;
-    width: 80px;
-  }
-
-  .footer-sticker.sticker-camera {
-    right: 2%;
-    bottom: 8%;
-    width: 85px;
-  }
-
-  /* ── Footer wordmark ────────────── */
+  /* Footer Wordmark + Stickers (Locked in proportional aspect-ratio scale) */
   .footer-bottom {
-    margin-top: 200px;
+    position: relative;
+    width: 100%;
+    margin-top: 36px !important;
+    margin-bottom: 20px !important;
+    overflow: visible !important;
   }
 
-  .footer-logo__svg {
-    width: 110%;
-    margin-left: -5%;
+  .footer-wordmark-container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 1200 / 240;
+    margin: 0 auto;
+    overflow: visible !important;
   }
 
-  /* ── Credits badge ──────────────── */
+  .footer-wordmark-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  .footer-stickers {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 1 !important;
+  }
+
+  .footer-sticker {
+    position: absolute;
+    pointer-events: auto;
+    z-index: 5;
+    opacity: 1 !important;
+    display: block !important;
+  }
+
   .footer-credits-wrapper {
-    margin-right: -15px;
-    margin-bottom: -15px;
+    margin-right: -10px;
+    margin-bottom: -10px;
   }
 
   .footer-credits {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
+    padding: 3px 10px;
   }
 
   .credits-box {
-    padding: 16px 20px;
-    gap: 20px;
+    max-width: calc(100vw - 40px);
+    padding: 14px 16px;
+  }
+
+  .credits-content {
+    gap: 18px;
+    padding: 10px;
   }
 
   .credits-label {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 
   .credits-name {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* ─── Extra Small Mobile (≤ 380px) ───────────────────────────────────────── */
+@media (max-width: 380px) {
+  .vimeo-hero__title {
+    font-size: 1.85rem;
+  }
+
+  .main-title {
+    font-size: 1.9rem;
+  }
+
+  .motion-card__title {
+    font-size: 2rem;
+  }
+
+  .motion-card__subtitle {
+    font-size: 2.2rem;
   }
 }

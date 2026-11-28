@@ -31,8 +31,9 @@ const HorizontalWords = () => {
             // --- ENTRANCE & PINNING LOGIC ---
             // To make letters start animating as we scroll down from VimeoHero,
             // we start the horizontal movement as soon as the section enters the viewport (top bottom).
-            const entranceDistance = window.innerHeight;
-            const pinnedDistance = 2500;
+            const isMobile = window.innerWidth <= 768;
+            const entranceDistance = isMobile ? window.innerHeight * 0.6 : window.innerHeight;
+            const pinnedDistance = isMobile ? 1200 : 2500;
 
             const scrollTween = gsap.timeline({
                 scrollTrigger: {

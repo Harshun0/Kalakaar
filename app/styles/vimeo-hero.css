@@ -220,6 +220,50 @@
     height: 16px;
 }
 
+/* ─── Hero Value Pill (Bottom Right) ─── */
+.vimeo-hero__tag {
+    position: absolute;
+    bottom: 28px;
+    right: 44px;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--color-lightgreen);
+    pointer-events: auto;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.vimeo-hero__tag:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.vimeo-hero__tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-lightgreen);
+    box-shadow: 0 0 8px var(--color-lightgreen);
+}
+
+@media (max-width: 768px) {
+    .vimeo-hero__tag {
+        display: none;
+    }
+}
+
 /* ─────────────────────────────────────────────────
    ④ Hover mute cursor bubble — appears on video hover
    (same elastic spring as .cursor-bubble)

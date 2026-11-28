@@ -1,15 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CARDS_DATA } from "@/lib/data";
 
 export default function ServiceCards() {
+  const [scale, setScale] = useState(1);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const containerRef = useRef(null);
+
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Animate underline SVG paths on scroll (from HeroSection)
+    // Animate underline SVG paths on scroll
     gsap.to(".title-underline-svg path", {
       strokeDashoffset: 0,
       duration: 1.2,
@@ -22,12 +26,35 @@ export default function ServiceCards() {
       },
     });
 
-    initCardAnimations();
+    // Dynamic scale calculation so desktop card fan stays identical on mobile/tablet
+    const updateScale = () => {
+      const screenW = window.innerWidth;
+      const isMobile = screenW <= 768;
+      setIsMobileView(isMobile);
+
+      if (screenW < 1360) {
+        // Leave 20px horizontal margin
+        const s = Math.min(1, Math.max(0.24, (screenW - 20) / 1340));
+        setScale(s);
+      } else {
+        setScale(1);
+      }
+    };
+
+    updateScale();
+    window.addEventListener("resize", updateScale);
+
+    const cleanup = initCardAnimations(containerRef.current);
+
+    return () => {
+      window.removeEventListener("resize", updateScale);
+      if (cleanup) cleanup();
+    };
   }, []);
 
   return (
     <>
-      {/* ─── "Browse creators for:" Heading ─── */}
+      {/* ─── "find creators for your brand:" Heading ─── */}
       <div className="title-container">
         <h2 className="main-title">
           find creators for your <span className="italic-text">brand:</span>
@@ -54,54 +81,106 @@ export default function ServiceCards() {
             strokeLinejoin="round"
           ></path>
         </svg>
+
+        {/* Mobile touch hint pill */}
+        {isMobileView && (
+          <div
+            style={{
+              marginTop: "16px",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              background: "rgba(0, 0, 0, 0.06)",
+              border: "1px solid rgba(0, 0, 0, 0.1)",
+              borderRadius: "999px",
+              padding: "6px 16px",
+              fontSize: "0.82rem",
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 600,
+              color: "rgba(0, 0, 0, 0.7)",
+              letterSpacing: "0.5px",
+            }}
+          >
+            <span>👉 tap or drag cards to inspect</span>
+          </div>
+        )}
       </div>
 
-      {/* ─── Service Cards ─── */}
-      <div className="cards-wrapper" id="cards-wrapper">
-        {CARDS_DATA.map((card) => (
-          <div key={card.color} className={`card card-${card.color}`}>
-            <div className={`card-sticker sticker-${card.sticker}`}>
-              <img
-                src={`/assets/Card-Sticker SVG/sticker-${card.sticker}.svg`}
-                alt=""
+      {/* ─── Service Cards (Scaled on mobile/tablet to preserve exact desktop deck-of-cards fan) ─── */}
+      <div
+        ref={containerRef}
+        className="cards-scale-container"
+        style={{
+          width: "100%",
+          height: `${Math.round(660 * scale)}px`,
+          position: "relative",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "flex-start",
+          overflow: "visible",
+          margin: "20px 0 60px",
+          touchAction: "pan-y",
+        }}
+      >
+        <div
+          className="cards-wrapper"
+          id="cards-wrapper"
+          style={{
+            transform: `scale(${scale})`,
+            transformOrigin: "top center",
+            width: "1340px",
+            minWidth: "1340px",
+            height: "600px",
+            margin: 0,
+            flexShrink: 0,
+            position: "relative",
+          }}
+        >
+          {CARDS_DATA.map((card) => (
+            <div key={card.color} className={`card card-${card.color}`}>
+              <div className={`card-sticker sticker-${card.sticker}`}>
+                <img
+                  src={`/assets/Card-Sticker SVG/sticker-${card.sticker}.svg`}
+                  alt=""
+                  width="100%"
+                  loading="lazy"
+                  aria-hidden="true"
+                />
+              </div>
+              <h3 className="card-title">{card.title}</h3>
+              <svg
                 width="100%"
-                loading="lazy"
+                height="10"
+                className="card-divider-svg"
                 aria-hidden="true"
-              />
+              >
+                <use href="#card-divider" />
+              </svg>
+              <ul className="card-list">
+                {card.services.map((service) => (
+                  <li key={service}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="13"
+                      height="16"
+                      className="services-card__bullet-svg"
+                      aria-hidden="true"
+                    >
+                      <use href="#bullet-icon" />
+                    </svg>
+                    {service}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <h3 className="card-title">{card.title}</h3>
-            <svg
-              width="100%"
-              height="10"
-              className="card-divider-svg"
-              aria-hidden="true"
-            >
-              <use href="#card-divider" />
-            </svg>
-            <ul className="card-list">
-              {card.services.map((service) => (
-                <li key={service}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="13"
-                    height="16"
-                    className="services-card__bullet-svg"
-                    aria-hidden="true"
-                  >
-                    <use href="#bullet-icon" />
-                  </svg>
-                  {service}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </>
   );
 }
 
-function initCardAnimations() {
+function initCardAnimations(wrapperElement) {
   const cards = gsap.utils.toArray(".card");
   if (!cards.length) return;
 
@@ -113,153 +192,195 @@ function initCardAnimations() {
     { rotation: 5 },
   ];
 
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  //   let leaveTimeout = null; no need GSAP can handle the interlining tweens internally once you set overwrite: true
+  let activeIndex = -1;
+  let resetTimer = null;
 
-  if (!isMobile) {
-    cards.forEach((card, index) => {
-      card.addEventListener("mouseenter", () => {
-        // if (leaveTimeout) {
-        //   clearTimeout(leaveTimeout);
-        //   leaveTimeout = null;
-        // }
-        const hoverGap = 120;
-        const clusterGap = 150;
-        const cardWidth = 320;
-        const hoveredLeft = cards[index].offsetLeft;
-        const leftCards = [];
-        const rightCards = [];
+  const expandCard = (index) => {
+    if (resetTimer) {
+      clearTimeout(resetTimer);
+      resetTimer = null;
+    }
 
-        cards.forEach((otherCard, otherIndex) => {
-          if (otherIndex < index)
-            leftCards.push({ card: otherCard, index: otherIndex });
-          else if (otherIndex > index)
-            rightCards.push({ card: otherCard, index: otherIndex });
-        });
+    const isMobile = window.innerWidth <= 768;
+    // On mobile, use larger pop-up distance and scale so the hover effect is bold and clearly visible
+    const hoverGap = isMobile ? 180 : 120;
+    const clusterGap = isMobile ? 190 : 150;
+    const cardWidth = 320;
+    const hoverScale = isMobile ? 1.3 : 1.08;
+    // On mobile lift the card up significantly so it rises out of the pack
+    const targetCommonTop = isMobile ? -30 : 50;
 
-        const currentTop = cards[index].offsetTop;
-        const targetCommonTop = 50;
-        const moveY = targetCommonTop - currentTop;
+    const hoveredLeft = cards[index].offsetLeft;
+    const leftCards = [];
+    const rightCards = [];
 
-        gsap.to(cards[index], {
-          x: 0,
-          y: moveY,
-          rotation: 0,
-          scale: 1.08,
+    cards.forEach((otherCard, otherIndex) => {
+      if (otherIndex < index)
+        leftCards.push({ card: otherCard, index: otherIndex });
+      else if (otherIndex > index)
+        rightCards.push({ card: otherCard, index: otherIndex });
+    });
+
+    const currentTop = cards[index].offsetTop;
+    const moveY = targetCommonTop - currentTop;
+
+    // Hovered/Active Card pop up
+    gsap.to(cards[index], {
+      x: 0,
+      y: moveY,
+      rotation: 0,
+      scale: hoverScale,
+      duration: 0.8,
+      ease: "elastic.out(1, 0.45)",
+      overwrite: true,
+      zIndex: 50,
+      boxShadow: "0 25px 60px rgba(0, 0, 0, 0.45)",
+    });
+
+    // Right side neighbor cards push away
+    if (rightCards.length) {
+      const clusterStart = hoveredLeft + cardWidth + hoverGap;
+      rightCards.forEach((item, i) => {
+        const targetAbsLeft = clusterStart + i * clusterGap;
+        const targetX = Math.max(targetAbsLeft - item.card.offsetLeft, 10);
+        const angleRad = originalData[item.index].rotation * (Math.PI / 180);
+        const targetY = targetX * Math.tan(angleRad);
+        gsap.to(item.card, {
+          x: targetX,
+          y: targetY,
+          rotation: originalData[item.index].rotation,
+          scale: 0.95,
           duration: 0.9,
           ease: "elastic.out(1, 0.5)",
           overwrite: true,
+          zIndex: item.index + 1,
+          boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
         });
-
-        if (rightCards.length) {
-          const clusterStart = hoveredLeft + cardWidth + hoverGap;
-          rightCards.forEach((item, i) => {
-            const targetAbsLeft = clusterStart + i * clusterGap;
-            const targetX = Math.max(targetAbsLeft - item.card.offsetLeft, 10);
-            const angleRad =
-              originalData[item.index].rotation * (Math.PI / 180);
-            const targetY = targetX * Math.tan(angleRad);
-            gsap.to(item.card, {
-              x: targetX,
-              y: targetY,
-              rotation: originalData[item.index].rotation,
-              scale: 1,
-              duration: 1.0,
-              ease: "elastic.out(1, 0.5)",
-              overwrite: true,
-            });
-          });
-        }
-
-        if (leftCards.length) {
-          leftCards.reverse();
-          const clusterStart = hoveredLeft - hoverGap - cardWidth;
-          leftCards.forEach((item, i) => {
-            const targetAbsLeft = clusterStart - i * clusterGap;
-            const targetX = Math.min(targetAbsLeft - item.card.offsetLeft, -10);
-            const angleRad =
-              originalData[item.index].rotation * (Math.PI / 180);
-            const targetY = targetX * Math.tan(angleRad);
-            gsap.to(item.card, {
-              x: targetX,
-              y: targetY,
-              rotation: originalData[item.index].rotation,
-              scale: 1,
-              duration: 1.0,
-              ease: "elastic.out(1, 0.5)",
-              overwrite: true,
-            });
-          });
-        }
       });
+    }
 
-      card.addEventListener("mouseleave", () => {
-        // leaveTimeout = setTimeout(() => {
-        cards.forEach((c, i) => {
-          gsap.to(c, {
-            x: 0,
-            y: 0,
-            scale: 1,
-            rotation: originalData[i].rotation,
-            duration: 1.0,
-            ease: "elastic.out(1, 0.5)",
-            overwrite: true,
-            zIndex: i + 1,
-            delay: 0.08,
-          });
+    // Left side neighbor cards push away
+    if (leftCards.length) {
+      leftCards.reverse();
+      const clusterStart = hoveredLeft - hoverGap - cardWidth;
+      leftCards.forEach((item, i) => {
+        const targetAbsLeft = clusterStart - i * clusterGap;
+        const targetX = Math.min(targetAbsLeft - item.card.offsetLeft, -10);
+        const angleRad = originalData[item.index].rotation * (Math.PI / 180);
+        const targetY = targetX * Math.tan(angleRad);
+        gsap.to(item.card, {
+          x: targetX,
+          y: targetY,
+          rotation: originalData[item.index].rotation,
+          scale: 0.95,
+          duration: 0.9,
+          ease: "elastic.out(1, 0.5)",
+          overwrite: true,
+          zIndex: item.index + 1,
+          boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
         });
-        // }, 80);
       });
-    });
-  } else {
-    // ─── Mobile: Stacked card scroll reveal ───
-    const cardsWrapper = document.querySelector(".cards-wrapper");
-    const scrollPerCard = window.innerHeight * 0.8;
-    const navH = 60;
-    const mobileRotations = [-6, 4, -8, 5, -3];
+    }
+  };
 
-    cards.forEach((card, i) => {
-      gsap.set(card, {
-        position: "absolute",
-        left: "50%",
-        top: "0",
-        xPercent: -50,
-        y: i === 0 ? 0 : window.innerHeight * 1.1,
-        rotation: mobileRotations[i % mobileRotations.length],
+  const resetCards = () => {
+    activeIndex = -1;
+    cards.forEach((c, i) => {
+      gsap.to(c, {
+        x: 0,
+        y: 0,
+        scale: 1,
+        rotation: originalData[i].rotation,
+        duration: 0.9,
+        ease: "elastic.out(1, 0.5)",
+        overwrite: true,
         zIndex: i + 1,
-        transformOrigin: "center center",
+        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
+        delay: 0.04,
       });
     });
+  };
 
-    const wrapperH =
-      window.innerHeight * 0.7 + scrollPerCard * (cards.length - 1);
-    gsap.set(cardsWrapper, { height: wrapperH });
+  // ─── Touch helper: find card under finger ───
+  const getCardFromPoint = (clientX, clientY) => {
+    const elem = document.elementFromPoint(clientX, clientY);
+    if (!elem) return null;
+    const cardEl = elem.closest(".card");
+    if (!cardEl) return null;
+    const idx = cards.indexOf(cardEl);
+    return idx !== -1 ? idx : null;
+  };
 
-    ScrollTrigger.create({
-      trigger: cardsWrapper,
-      start: `top ${navH}px`,
-      end: `+=${scrollPerCard * (cards.length - 1)}`,
-      pin: true,
-      pinSpacing: true,
-      id: "mobile-cards-pin",
+  // ─── Event Listeners per card ───
+  cards.forEach((card, index) => {
+    // Mouse hover (desktop)
+    card.addEventListener("mouseenter", () => {
+      activeIndex = index;
+      expandCard(index);
     });
 
-    cards.forEach((card, i) => {
-      if (i === 0) return;
-      gsap.fromTo(
-        card,
-        { y: window.innerHeight * 1.1 },
-        {
-          y: 0,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: cardsWrapper,
-            start: `top+=${(i - 1) * scrollPerCard} ${navH}px`,
-            end: `top+=${i * scrollPerCard} ${navH}px`,
-            scrub: 0.4,
-          },
-        },
-      );
+    card.addEventListener("mouseleave", () => {
+      resetCards();
     });
+
+    // Pointer/Touch immediate response
+    card.addEventListener("pointerdown", (e) => {
+      activeIndex = index;
+      expandCard(index);
+    });
+
+    // Tap/Click toggle
+    card.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (activeIndex === index) {
+        // already active, leave it or toggle
+      } else {
+        activeIndex = index;
+        expandCard(index);
+      }
+    });
+  });
+
+  // ─── Mobile touch sliding / dragging across cards ───
+  const handleTouchMove = (e) => {
+    if (!e.touches || !e.touches[0]) return;
+    const touch = e.touches[0];
+    const idx = getCardFromPoint(touch.clientX, touch.clientY);
+    if (idx !== null && idx !== activeIndex) {
+      activeIndex = idx;
+      expandCard(idx);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (resetTimer) clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+      resetCards();
+    }, 2800);
+  };
+
+  const container = wrapperElement || document.querySelector(".cards-scale-container");
+  if (container) {
+    container.addEventListener("touchmove", handleTouchMove, { passive: true });
+    container.addEventListener("touchend", handleTouchEnd, { passive: true });
   }
+
+  // Tap outside to reset
+  const handleDocClick = (e) => {
+    if (!e.target.closest(".card")) {
+      resetCards();
+    }
+  };
+  document.addEventListener("click", handleDocClick);
+  document.addEventListener("touchstart", handleDocClick, { passive: true });
+
+  return () => {
+    if (resetTimer) clearTimeout(resetTimer);
+    if (container) {
+      container.removeEventListener("touchmove", handleTouchMove);
+      container.removeEventListener("touchend", handleTouchEnd);
+    }
+    document.removeEventListener("click", handleDocClick);
+    document.removeEventListener("touchstart", handleDocClick);
+  };
 }

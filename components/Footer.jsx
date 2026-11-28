@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SOCIAL_ICONS, WIGGLE_CONFIG } from '@/lib/data';
@@ -40,19 +40,15 @@ export default function Footer() {
             const creditsBox = creditsWrapper.querySelector('.credits-box');
             const creditsItems = creditsBox.querySelectorAll('.credits-item');
 
-            // Temporarily make the box visible to measure full dimensions
             gsap.set(creditsBox, { visibility: 'visible', width: 'auto', height: 'auto', opacity: 1 });
             const boxRect = creditsBox.getBoundingClientRect();
             const fullWidth = boxRect.width;
             const fullHeight = boxRect.height;
-            const boxHeight = boxRect.height; // for text Y translation
+            const boxHeight = boxRect.height;
 
-            // Distance from box's final position down to behind the credits button
             const creditsBtn = creditsWrapper.querySelector('.footer-credits');
             const startY = creditsBtn.offsetHeight + 15;
 
-            // Set precise initial states for box and text
-            // Box starts collapsed rather than 0 scale
             gsap.set(creditsBox, { visibility: 'hidden', width: 0, height: 0, opacity: 0, y: startY });
             gsap.set(creditsItems, { y: boxHeight });
 
@@ -60,26 +56,17 @@ export default function Footer() {
                 gsap.set(creditsBox, { visibility: 'visible' });
                 gsap.killTweensOf(creditsBox);
                 gsap.killTweensOf(creditsItems);
-
-                // Box physically grows to full dimensions instead of scaling
                 gsap.to(creditsBox, { width: fullWidth, height: fullHeight, opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' });
-
-                // Text slides up smoothly, slightly delayed
                 gsap.to(creditsItems, { y: 0, duration: 0.5, stagger: 0.04, ease: 'power3.out', delay: 0.1 });
             };
 
             const onLeave = () => {
                 gsap.killTweensOf(creditsBox);
                 gsap.killTweensOf(creditsItems);
-
-                // Box physically shrinks to 0x0
                 gsap.to(creditsBox, {
                     width: 0, height: 0, opacity: 0, y: startY, duration: 0.35, ease: 'power3.in',
                     onComplete: () => gsap.set(creditsBox, { visibility: 'hidden' })
                 });
-
-                // Text sits perfectly still while the box begins crushing it, 
-                // and then slowly slides back down in reverse order (`stagger: -0.03`) so the rightmost column clears first
                 gsap.to(creditsItems, { y: boxHeight, duration: 0.4, ease: 'power3.in', stagger: -0.03, delay: 0.1 });
             };
 
@@ -90,19 +77,27 @@ export default function Footer() {
         // ─── Footer sticker pop-up on scroll ───
         const footerStickers = gsap.utils.toArray('.footer-sticker');
         const stickerRotations = [12, -10, 8, -12, 10, -8];
-        gsap.set(footerStickers, { scale: 0, opacity: 0, transformOrigin: 'center bottom' });
-        footerStickers.forEach((sticker, i) => gsap.set(sticker, { rotation: stickerRotations[i % stickerRotations.length] }));
+        const isMobile = window.innerWidth <= 768;
 
-        gsap.to(footerStickers, {
-            scale: 1, opacity: 1,
-            rotation: (i) => stickerRotations[i % stickerRotations.length] * 0.7,
-            duration: 0.7, ease: 'back.out(1.7)', stagger: 0.12,
-            scrollTrigger: {
-                trigger: '.footer-stickers',
-                start: 'top 80%',
-                toggleActions: 'play none none reverse' // Play on enter, reverse on leave up
-            }
-        });
+        if (isMobile) {
+            // On mobile, guarantee stickers are immediately visible and scaled beautifully around the wordmark
+            gsap.set(footerStickers, { scale: 1, opacity: 1, transformOrigin: 'center center' });
+            footerStickers.forEach((sticker, i) => gsap.set(sticker, { rotation: stickerRotations[i % stickerRotations.length] * 0.7 }));
+        } else {
+            gsap.set(footerStickers, { scale: 0, opacity: 0, transformOrigin: 'center bottom' });
+            footerStickers.forEach((sticker, i) => gsap.set(sticker, { rotation: stickerRotations[i % stickerRotations.length] }));
+
+            gsap.to(footerStickers, {
+                scale: 1, opacity: 1,
+                rotation: (i) => stickerRotations[i % stickerRotations.length] * 0.7,
+                duration: 0.7, ease: 'back.out(1.7)', stagger: 0.12,
+                scrollTrigger: {
+                    trigger: '.main-footer',
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        }
 
         // ─── Sticker cursor-velocity push ───
         footerStickers.forEach((sticker, i) => {
@@ -120,7 +115,6 @@ export default function Footer() {
                 const onSticker = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
                 const speed = Math.hypot(dx, dy);
 
-                // Disable proximity push if the mouse is hovering over the open credits popup box
                 const isOverCreditsBox = e.target.closest('.credits-box') !== null;
 
                 if (!onSticker && !isOverCreditsBox && dist < PROXIMITY_RADIUS && speed > MIN_SPEED) {
@@ -133,7 +127,6 @@ export default function Footer() {
                 }
             };
             document.addEventListener('mousemove', onMove);
-            // No cleanup stored here to match original behaviour (lives for page lifetime)
         });
 
         // ─── Wiggle on footer interactive elements ───
@@ -142,15 +135,15 @@ export default function Footer() {
             { selector: '.footer-map-link span', key: 'googleMap' },
             { selector: '.footer-email', key: 'email' },
             { selector: '.footer-whatsapp', key: 'whatsapp' },
-            { selector: '.credits-name', key: 'socials' }, // Added wiggle target for names using social intensity
+            { selector: '.credits-name', key: 'socials' },
         ];
         wiggleTargets.forEach(({ selector, key }) => {
             document.querySelectorAll(selector).forEach(el => initWiggle(el, WIGGLE_CONFIG[key]));
         });
 
-        // ─── Social icon wiggle ───
         document.querySelectorAll('.single-social').forEach(el => initWiggle(el, WIGGLE_CONFIG.socials));
 
+        return () => {};
     }, []);
 
     return (
@@ -198,31 +191,50 @@ export default function Footer() {
                 </div>
             </div>
 
-            {/* Big KALAKAAR wordmark */}
+            {/* Big KALAKAAR wordmark + Stickers */}
             <div className="footer-bottom">
-                <div className="footer-big-text">
-                    <h2 className="footer-logo__text">Kalakaar</h2>
-                </div>
+                <div className="footer-wordmark-container">
+                    <div className="footer-big-text">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 1200 240"
+                            className="footer-wordmark-svg"
+                            aria-label="Kalakaar"
+                        >
+                            <text
+                                x="50"
+                                y="180"
+                                textLength="1100"
+                                lengthAdjust="spacingAndGlyphs"
+                                fontFamily="'Pacifico', cursive"
+                                fontSize="200"
+                                fill="#FFFFFF"
+                            >
+                                Kalakaar
+                            </text>
+                        </svg>
+                    </div>
 
-                {/* Stickers */}
-                <div className="footer-stickers">
-                    <div className="footer-sticker sticker-smiley">
-                        <img src="/assets/Footer-Sticker SVG/footer-sticker-smiley.svg" width="100%" alt="" data-scroll-animation-target="" aria-hidden="true" />
-                    </div>
-                    <div className="footer-sticker sticker-heart">
-                        <img src="/assets/Footer-Sticker SVG/footer-sticker-heart.svg" width="100%" alt="" data-scroll-animation-target="" aria-hidden="true" />
-                    </div>
-                    <div className="footer-sticker sticker-hands">
-                        <img src="/assets/Footer-Sticker SVG/footer-sticker-hands.svg" width="100%" alt="" data-scroll-animation-target="" aria-hidden="true" />
-                    </div>
-                    <div className="footer-sticker sticker-100">
-                        <img src="/assets/Footer-Sticker SVG/footer-sticker-100.svg" width="100%" alt="" data-scroll-animation-target="" aria-hidden="true" />
-                    </div>
-                    <div className="footer-sticker sticker-camera">
-                        <img src="/assets/Footer-Sticker SVG/footer-sticker-camera.svg" width="100%" alt="" aria-hidden="true" />
-                    </div>
-                    <div className="footer-sticker sticker-boom">
-                        <img src="/assets/Footer-Sticker SVG/footer-sticker-boom.svg" width="100%" alt="" data-scroll-animation-target="" aria-hidden="true" />
+                    {/* Stickers anchored directly to the letters of Kalakaar */}
+                    <div className="footer-stickers">
+                        <div className="footer-sticker sticker-boom">
+                            <img src="/assets/Footer-Sticker SVG/footer-sticker-boom.svg" width="100%" alt="" data-scroll-animation-target="" aria-hidden="true" />
+                        </div>
+                        <div className="footer-sticker sticker-smiley">
+                            <img src="/assets/Footer-Sticker SVG/footer-sticker-smiley.svg" width="100%" alt="" data-scroll-animation-target="" aria-hidden="true" />
+                        </div>
+                        <div className="footer-sticker sticker-heart">
+                            <img src="/assets/Footer-Sticker SVG/footer-sticker-heart.svg" width="100%" alt="" data-scroll-animation-target="" aria-hidden="true" />
+                        </div>
+                        <div className="footer-sticker sticker-100">
+                            <img src="/assets/Footer-Sticker SVG/footer-sticker-100.svg" width="100%" alt="" data-scroll-animation-target="" aria-hidden="true" />
+                        </div>
+                        <div className="footer-sticker sticker-hands">
+                            <img src="/assets/Footer-Sticker SVG/footer-sticker-hands.svg" width="100%" alt="" data-scroll-animation-target="" aria-hidden="true" />
+                        </div>
+                        <div className="footer-sticker sticker-camera">
+                            <img src="/assets/Footer-Sticker SVG/footer-sticker-camera.svg" width="100%" alt="" aria-hidden="true" />
+                        </div>
                     </div>
                 </div>
 

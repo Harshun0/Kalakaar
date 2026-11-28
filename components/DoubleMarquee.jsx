@@ -46,27 +46,37 @@ function assignColorsNoAdjacent(count, colorPool) {
     return result;
 }
 
-function buildMarqueeItems(isMobile) {
+function buildMarqueeItems() {
     const tracks = [[], []];
     for (let t = 0; t < 2; t++) {
         const shuffledBrands = shuffleNoAdjacentSrc(brands);
         const assignedColors = assignColorsNoAdjacent(shuffledBrands.length, colors);
         const items = shuffledBrands.map((brand, i) => ({ brand, color: assignedColors[i] }));
-        tracks[t] = isMobile ? items : [...items, ...items]; // duplicate for seamless loop
+        tracks[t] = [...items, ...items]; // duplicate for seamless infinite loop
     }
     return tracks;
 }
 
 export default function DoubleMarquee() {
     const [tracks, setTracks] = useState([[], []]);
-    const [isMobile, setIsMobile] = useState(false);
+    const [scale, setScale] = useState(1);
 
     useEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
+        setTracks(buildMarqueeItems());
 
-        const mobile = window.matchMedia('(max-width: 768px)').matches;
-        setIsMobile(mobile);
-        setTracks(buildMarqueeItems(mobile));
+        const updateScale = () => {
+            const screenW = window.innerWidth;
+            if (screenW < 1260) {
+                const s = Math.min(1, Math.max(0.24, (screenW - 20) / 1220));
+                setScale(s);
+            } else {
+                setScale(1);
+            }
+        };
+
+        updateScale();
+        window.addEventListener('resize', updateScale);
 
         // Arrow path animation
         gsap.set('.marquee-left .marquee-svg-item:nth-child(2) path', { strokeDashoffset: 1000 });
@@ -74,8 +84,8 @@ export default function DoubleMarquee() {
         const marqueeTl = gsap.timeline({
             scrollTrigger: {
                 trigger: '.Double-marquee',
-                start: 'top 70%',
-                toggleActions: 'play none none reverse' // Allow replaying on scroll out/in
+                start: 'top 75%',
+                toggleActions: 'play none none reverse'
             }
         });
 
@@ -85,53 +95,82 @@ export default function DoubleMarquee() {
             .to('.marquee-left .marquee-svg-item:nth-child(2) path', { strokeDashoffset: 0, duration: 1.5, ease: 'power2.out' }, '-=0.3');
 
         return () => {
+            window.removeEventListener('resize', updateScale);
             ScrollTrigger.getAll().forEach(t => { if (t.vars.trigger === '.Double-marquee') t.kill(); });
         };
     }, []);
 
     return (
-        <>
-            {/* Left: Text + Blob */}
-            <div className="marquee-left">
-                <div className="marquee-text-container">
-                    <h2>proud to have<br />worked <span className="text-with">with:</span></h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="marquee-underline" viewBox="0 0 132 5" fill="none">
-                        <path d="M1 2.08377C44.3458 3.90451 87.9791 5.71442 131 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                </div>
-                <div className="marquee-blob-container">
-                    <img src="/assets/Marquee-blob SVG/marquee-blob.svg" className="marquee-blob" alt="" aria-hidden="true" />
-                    <div className="marquee-svg-container">
-                        <div className="marquee-svg-item">
-                            <img src="/assets/Marquee-blob SVG/marquee-hand.svg" width="100%" alt="" aria-hidden="true" />
-                        </div>
-                        <div className="marquee-svg-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 386 127" fill="none">
-                                <path d="M2 123C9 35.9999 84.5 17 124 25.9999C217.764 47.3635 207 115 177.5 123C105.777 142.45 110.737 1.99991 232.5 2C310.5 2.00006 366.5 79 376 118L356.5 105.5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="M2 123C9 35.9999 84.5 17 124 25.9999C217.764 47.3635 207 115 177.5 123C105.777 142.45 110.737 1.99991 232.5 2C310.5 2.00006 366.5 79 376 118L384 97" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
+        <div
+            className="marquee-scale-container"
+            style={{
+                width: '100%',
+                height: `${Math.round(850 * scale)}px`,
+                position: 'relative',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'visible',
+            }}
+        >
+            <div
+                className="Double-marquee-inner"
+                style={{
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'center center',
+                    width: '1220px',
+                    minWidth: '1220px',
+                    height: '850px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: '40px',
+                    position: 'relative',
+                    flexShrink: 0,
+                }}
+            >
+                {/* Left: Text + Blob */}
+                <div className="marquee-left">
+                    <div className="marquee-text-container">
+                        <h2>proud to have<br />worked <span className="text-with">with:</span></h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="marquee-underline" viewBox="0 0 132 5" fill="none">
+                            <path d="M1 2.08377C44.3458 3.90451 87.9791 5.71442 131 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </div>
+                    <div className="marquee-blob-container">
+                        <img src="/assets/Marquee-blob SVG/marquee-blob.svg" className="marquee-blob" alt="" aria-hidden="true" />
+                        <div className="marquee-svg-container">
+                            <div className="marquee-svg-item">
+                                <img src="/assets/Marquee-blob SVG/marquee-hand.svg" width="100%" alt="" aria-hidden="true" />
+                            </div>
+                            <div className="marquee-svg-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 386 127" fill="none">
+                                    <path d="M2 123C9 35.9999 84.5 17 124 25.9999C217.764 47.3635 207 115 177.5 123C105.777 142.45 110.737 1.99991 232.5 2C310.5 2.00006 366.5 79 376 118L356.5 105.5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M2 123C9 35.9999 84.5 17 124 25.9999C217.764 47.3635 207 115 177.5 123C105.777 142.45 110.737 1.99991 232.5 2C310.5 2.00006 366.5 79 376 118L384 97" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Right: Two scrolling columns */}
-            <div className="marquee-right">
-                {tracks.map((trackItems, colIndex) => (
-                    <div key={colIndex} className="marquee-column">
-                        <div className="marquee-track">
-                            {trackItems.map((item, i) => (
-                                <div key={i} className="marquee-item" data-brand={item.brand.name} style={{ backgroundColor: item.color }}>
-                                    <div className="marquee-logo">
-                                        <div className="marquee-logo__before"></div>
-                                        <img src={item.brand.src} loading="lazy" alt={item.brand.name} className="cover-image" />
+                {/* Right: Two scrolling columns */}
+                <div className="marquee-right">
+                    {tracks.map((trackItems, colIndex) => (
+                        <div key={colIndex} className="marquee-column">
+                            <div className="marquee-track">
+                                {trackItems.map((item, i) => (
+                                    <div key={i} className="marquee-item" data-brand={item.brand.name} style={{ backgroundColor: item.color }}>
+                                        <div className="marquee-logo">
+                                            <div className="marquee-logo__before"></div>
+                                            <img src={item.brand.src} loading="lazy" alt={item.brand.name} className="cover-image" />
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-        </>
+        </div>
     );
 }

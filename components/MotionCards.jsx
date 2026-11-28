@@ -160,16 +160,16 @@ export default function MotionCards() {
                 </div>
 
 
-                {/* 4 Photo Cards */}
+                {/* 4 Photo Cards featuring Indian Creators */}
                 <div ref={containerRef} className="motion-card__cards">
                     <div className="motion-card__card motion-card__card--1">
                         <div className="motion-card__card-image">
                             <img
-                                src="https://cdn.prod.website-files.com/683703490bc01e1b8c052e06/686b8e614494dac669a4099c_c310914b5a1a573b4c7499e9531f8d52_DE.avif"
+                                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=80"
                                 loading="lazy"
                                 width={1000}
                                 height={1000}
-                                alt=""
+                                alt="Ananya Rao - Fashion & Editorial Creator"
                                 className="cover-image"
                             />
                         </div>
@@ -178,11 +178,11 @@ export default function MotionCards() {
                     <div className="motion-card__card motion-card__card--2">
                         <div className="motion-card__card-image">
                             <img
-                                src="https://cdn.prod.website-files.com/683703490bc01e1b8c052e06/686b8e607142a7a25157d9dd_1875b9852ca289170917f9060c95b6a4_BolpuntJapie.avif"
+                                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=80"
                                 loading="lazy"
                                 width={1000}
                                 height={1000}
-                                alt=""
+                                alt="Vikram Sehgal - Tech & AI Reviewer"
                                 className="cover-image"
                             />
                         </div>
@@ -191,11 +191,11 @@ export default function MotionCards() {
                     <div className="motion-card__card motion-card__card--3">
                         <div className="motion-card__card-image">
                             <img
-                                src="https://cdn.prod.website-files.com/683703490bc01e1b8c052e06/686b8e60ba19eb1109d3daa5_b1280272f47b3cd3ea25b91391935efa_RonaldoMassage.avif"
+                                src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1000&q=80"
                                 loading="lazy"
                                 width={1000}
                                 height={1000}
-                                alt=""
+                                alt="Priya Deshmukh - Culinary & Cafe Culture"
                                 className="cover-image"
                             />
                         </div>
@@ -204,11 +204,11 @@ export default function MotionCards() {
                     <div className="motion-card__card motion-card__card--4">
                         <div className="motion-card__card-image">
                             <img
-                                src="https://cdn.prod.website-files.com/683703490bc01e1b8c052e06/686b8e607d351d1335f06e04_f1aafb2150d81c3990c906d901d2e7e4_Esprix.avif"
+                                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=80"
                                 loading="lazy"
                                 width={1000}
                                 height={1000}
-                                alt=""
+                                alt="Rohan Kulkarni - Travel & Street Film"
                                 className="cover-image"
                             />
                         </div>
@@ -218,13 +218,13 @@ export default function MotionCards() {
                 {/* Floating labels — positioned freely over the cards area */}
                 <div ref={containerRef} className="motion-card__floating-labels">
                     <div className="motion-card__floating-label motion-card__floating-label--pink">
-                        <p className="motion-card__floating-text">girls just wanna have fun!</p>
+                        <p className="motion-card__floating-text">0% platform commission</p>
                     </div>
                     <div className="motion-card__floating-label motion-card__floating-label--orange">
-                        <p className="motion-card__floating-text">mainstream is not a dirty word</p>
+                        <p className="motion-card__floating-text">verified in 25+ indian cities</p>
                     </div>
                     <div className="motion-card__floating-label motion-card__floating-label--red">
-                        <p className="motion-card__floating-text">arrogance = old fashioned</p>
+                        <p className="motion-card__floating-text">transparent upfront rates</p>
                     </div>
                 </div>
             </div>
